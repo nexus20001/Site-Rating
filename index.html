@@ -35,7 +35,7 @@
     <script type="text/x-handlebars" data-template-name="site">
         <h2>{{name}}</h2>
         {{#link-to 'index'}}Back{{/link-to}}
-        {{star-rating param=this}}
+        {{star-rating param=this action="saveRating"}}
         {{rate.rating}}
         <p>{{desc}}</p>
     </script>
