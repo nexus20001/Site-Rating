@@ -1,53 +1,103 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Rating Site</title>
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.css">
-   <script src="http://emberjs.com.s3.amazonaws.com/getting-started/jquery.min.js"></script>
-</head>
-<body>
+App = Ember.Application.create();
+App.SiteAdapter = DS.FixtureAdapter.extend();
 
-    <script type="text/x-handlebars" id="sites">
-    <h2>Sites</h2>
-    <table class="ui table segment">
-    <thead>
-      <tr><th>Name</th>
-      <th>URL</th>
-      </tr>
-    </thead>
-    <tbody>
-        {{#each site in controller}}
-    <tr>
-      <td>{{#link-to 'site' site title='Click to vote'}}{{site.name}}{{/link-to}}</td>
-      <td><a {{bind-attr href="site.url"}} >{{site.url}}</a></td>
-    </tr> 
-        {{/each}}
-    </tbody>
-    </table> 
-    </script>
+App.Site = DS.Model.extend({
+    rate: DS.belongsTo('rating'),
+    name: DS.attr(),
+    url: DS.attr(),
+    desc: DS.attr()
+});
 
-    <script type="text/x-handlebars" data-template-name="site">
-        <h2>{{name}}</h2>
-        {{#link-to 'index'}}Back{{/link-to}}
-        {{star-rating param=this}}
-        <p>{{desc}}</p>
-    </script>
+App.Rating = DS.Model.extend({
+    st: DS.belongsTo('site'),
+    rating: function() {
+    return localStorage.getItem(this.get('id')) ? localStorage.getItem(this.get('id')) : 3;
+  }.property('id')
 
-    <script type="text/x-handlebars" id="components/star-rating">
-    <ul style="padding: 0">
-    {{#each star in stars}}
-        <li style="color: #FFD700;" {{bind-attr class=":glyphicon star.empty:glyphicon-star-empty:glyphicon-star"}} {{action click star}}></li>
-    {{/each}}
-    </ul>
-   </script>
- 
-   <script src="http://emberjs.com.s3.amazonaws.com/getting-started/handlebars.js"></script>
-   <script src="http://builds.emberjs.com/release/ember.js"></script>
-   <script src="http://emberjs.com.s3.amazonaws.com/getting-started/ember-data.js"></script>
-   <script src="js/app.js"></script>
+});
 
-</body>
-</html>
+App.Rating.FIXTURES = [
+    {
+        id: 1,
+        st: 1,
+    },
+    {
+        id: 2,
+        st: 2,  
+    },
+    {
+        id: 3,
+        st: 3,
+    }
+];
+
+App.Site.FIXTURES = [
+    {
+        id: 1,
+        rate: 1,
+        name: 'Вконтакте',
+        url: 'https://vk.com',
+        desc: '«ВКонтакте» (VK.com) — крупнейшая в Рунете социальная сеть.'
+    },
+    {
+        id: 2,
+        rate:2,
+        name: 'Facebook',
+        url: 'https://www.facebook.com',
+        desc: 'Facebook — одна из крупнейших социальных сетей в мире.'
+    },
+    {
+        id: 3,
+        rate:3,
+        name: 'Myspace',
+        url: 'https://myspace.com',
+        desc: 'MySpace — международная социальная сеть.'
+    }
+];
+
+App.Router.map(function(){
+  this.resource("sites");
+  this.resource("site", { path: 'site/:site_id' });
+ });
+
+App.SitesRoute = Ember.Route.extend({
+    model: function(){
+        return this.store.find('site');
+    }
+});
+
+App.SiteRoute = Ember.Route.extend({
+  model: function(params) {
+    return this.store.find('site', params.site_id);
+  }
+});
+
+App.IndexRoute = Ember.Route.extend({
+    redirect: function(){
+        this.transitionTo('sites');
+    }
+});
+
+
+
+App.StarRatingComponent = Ember.Component.extend({
+    maxStars: 5,
+    starRating: 0,
+    stars: [],
+    actions: {
+        click: function(star){
+          //  alert(star.index);
+            localStorage.setItem(this.get('param.id'), star.index);
+            this.set('starRating', star.index);
+
+        }
+    },
+    setRating: function() {
+        var stars = [], i = 0;
+        var starRating =  localStorage.getItem(this.get('param.id')) ? localStorage.getItem(this.get('param.id')) : 3;
+        for(i = 0; i < this.get('maxStars'); i++){
+            stars.pushObject(Em.Object.create({empty:i >= starRating, index:i+1}));
+        }
+        this.set('stars', stars);
+    }.observes('starRating').on('didInsertElement')
+});
