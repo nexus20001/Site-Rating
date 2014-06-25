@@ -1,5 +1,6 @@
 App = Ember.Application.create();
 App.SiteAdapter = DS.FixtureAdapter.extend();
+//App.Store = DS.Store.extend();
 
 App.Site = DS.Model.extend({
     rate: DS.belongsTo('rating'),
@@ -7,6 +8,7 @@ App.Site = DS.Model.extend({
     url: DS.attr(),
     desc: DS.attr()
 });
+
 
 App.Rating = DS.Model.extend({
     st: DS.belongsTo('site'),
@@ -66,11 +68,7 @@ App.SitesRoute = Ember.Route.extend({
     }
 });
 
-App.SiteRoute = Ember.Route.extend({
-  model: function(params) {
-    return this.store.find('site', params.site_id);
-  }
-});
+
 
 App.IndexRoute = Ember.Route.extend({
     redirect: function(){
@@ -78,7 +76,18 @@ App.IndexRoute = Ember.Route.extend({
     }
 });
 
-
+App.SiteRoute = Ember.Route.extend({
+  model: function(params) {
+    return this.store.find('site', params.site_id);
+  },
+    actions: {
+    saveRating: function(id,rating) {
+      var st_rating = this.store.find('rating', id);
+      st_rating.set('rating', rating);
+      st_rating.save();
+    }
+  }
+});
 
 App.StarRatingComponent = Ember.Component.extend({
     maxStars: 5,
@@ -86,10 +95,9 @@ App.StarRatingComponent = Ember.Component.extend({
     stars: [],
     actions: {
         click: function(star){
-          //  alert(star.index);
             localStorage.setItem(this.get('param.id'), star.index);
             this.set('starRating', star.index);
-
+            this.sendAction('action',  this.get('param.id') ,star.index);
         }
     },
     setRating: function() {
