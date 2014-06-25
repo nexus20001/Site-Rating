@@ -2,26 +2,53 @@ App = Ember.Application.create();
 App.SiteAdapter = DS.FixtureAdapter.extend();
 
 App.Site = DS.Model.extend({
+    rate: DS.belongsTo('rating'),
     name: DS.attr(),
     url: DS.attr(),
     desc: DS.attr()
 });
 
+App.Rating = DS.Model.extend({
+    st: DS.belongsTo('site'),
+    rating: function() {
+    return localStorage.getItem(this.get('id')) ? localStorage.getItem(this.get('id')) : 3;
+  }.property('id')
+
+});
+
+App.Rating.FIXTURES = [
+    {
+        id: 1,
+        st: 1,
+    },
+    {
+        id: 2,
+        st: 2,  
+    },
+    {
+        id: 3,
+        st: 3,
+    }
+];
+
 App.Site.FIXTURES = [
     {
         id: 1,
+        rate: 1,
         name: 'Вконтакте',
         url: 'https://vk.com',
         desc: '«ВКонтакте» (VK.com) — крупнейшая в Рунете социальная сеть.'
     },
     {
         id: 2,
+        rate:2,
         name: 'Facebook',
         url: 'https://www.facebook.com',
         desc: 'Facebook — одна из крупнейших социальных сетей в мире.'
     },
     {
         id: 3,
+        rate:3,
         name: 'Myspace',
         url: 'https://myspace.com',
         desc: 'MySpace — международная социальная сеть.'
@@ -50,6 +77,8 @@ App.IndexRoute = Ember.Route.extend({
         this.transitionTo('sites');
     }
 });
+
+
 
 App.StarRatingComponent = Ember.Component.extend({
     maxStars: 5,
