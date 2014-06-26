@@ -35,11 +35,14 @@
     <script type="text/x-handlebars" data-template-name="site">
         <h2>{{name}}</h2>
         {{#link-to 'index'}}Back{{/link-to}}
-        {{star-rating param=this action="saveRating"}}
-        {{rate.rating}}
+        <br>
+        {{input value=rating}}
+        <button id="saveRating" {{action "saveRating" this rating}}>
+        Save
+        </button>
         <p>{{desc}}</p>
     </script>
-
+<!--
 <script type="text/x-handlebars" id="components/star-rating">
     <ul style="padding: 0">
     {{#each star in stars}}
@@ -47,7 +50,7 @@
     {{/each}}
     </ul>
 </script>
-
+-->
   <script src="http://emberjs.com.s3.amazonaws.com/getting-started/handlebars.js"></script>
   <script src="http://builds.emberjs.com/release/ember.js"></script>
   <script src="http://emberjs.com.s3.amazonaws.com/getting-started/ember-data.js"></script>
