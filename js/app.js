@@ -1,15 +1,13 @@
 App = Ember.Application.create();
 App.SiteAdapter = DS.FixtureAdapter.extend();
-//App.Store = DS.Store.extend();
 
 App.Site = DS.Model.extend({
-    rate: DS.belongsTo('rating'),
     name: DS.attr(),
     url: DS.attr(),
+    rating: DS.attr(),
     desc: DS.attr()
 });
-
-
+/*
 App.Rating = DS.Model.extend({
     st: DS.belongsTo('site'),
     rating: function() {
@@ -32,27 +30,27 @@ App.Rating.FIXTURES = [
         st: 3,
     }
 ];
-
+*/
 App.Site.FIXTURES = [
     {
         id: 1,
-        rate: 1,
         name: 'Вконтакте',
         url: 'https://vk.com',
+        rating: 3,
         desc: '«ВКонтакте» (VK.com) — крупнейшая в Рунете социальная сеть.'
     },
     {
         id: 2,
-        rate:2,
         name: 'Facebook',
         url: 'https://www.facebook.com',
+        rating: 3,
         desc: 'Facebook — одна из крупнейших социальных сетей в мире.'
     },
     {
         id: 3,
-        rate:3,
         name: 'Myspace',
         url: 'https://myspace.com',
+        rating: 3,
         desc: 'MySpace — международная социальная сеть.'
     }
 ];
@@ -81,14 +79,28 @@ App.SiteRoute = Ember.Route.extend({
     return this.store.find('site', params.site_id);
   },
     actions: {
-    saveRating: function(id,rating) {
-      var st_rating = this.store.find('rating', id);
-      st_rating.set('rating', rating);
-      st_rating.save();
+    saveRating: function (param,rating) {
+      var st_rating = this.get('store').find('site', param.id);
+      alert(st_rating.get('rating'));
+      //st_rating.set('rating', rating);
+      //st_rating.save();
+    },
     }
-  }
-});
-
+  });
+/*
+App.SiteController = Ember.ObjectController.extend({
+    content: {},
+  actions: {
+    saveRating: function (param,rating) {
+      var st_rating = this.get('store').find('site', param.id);
+      alert(st_rating.get('rating'));
+      //st_rating.set('rating', rating);
+      //st_rating.save();
+    },
+    }
+})
+*/
+/*
 App.StarRatingComponent = Ember.Component.extend({
     maxStars: 5,
     starRating: 0,
@@ -109,3 +121,4 @@ App.StarRatingComponent = Ember.Component.extend({
         this.set('stars', stars);
     }.observes('starRating').on('didInsertElement')
 });
+*/
