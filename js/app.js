@@ -7,30 +7,7 @@ App.Site = DS.Model.extend({
     rating: DS.attr(),
     desc: DS.attr()
 });
-/*
-App.Rating = DS.Model.extend({
-    st: DS.belongsTo('site'),
-    rating: function() {
-    return localStorage.getItem(this.get('id')) ? localStorage.getItem(this.get('id')) : 3;
-  }.property('id')
 
-});
-
-App.Rating.FIXTURES = [
-    {
-        id: 1,
-        st: 1,
-    },
-    {
-        id: 2,
-        st: 2,  
-    },
-    {
-        id: 3,
-        st: 3,
-    }
-];
-*/
 App.Site.FIXTURES = [
     {
         id: 1,
@@ -85,35 +62,10 @@ App.SiteRoute = Ember.Route.extend({
 
 App.SiteController = Ember.ObjectController.extend({
   actions: {
-    saveRating: function (param,rating) {
-      var st_rating = this.get('store').find('site', param.id);
-      st_rating.then(function() {
+   saveRating: function (param,rating) {
+      var st_rating = this.get('model');
       st_rating.set('rating', rating );
-      });
-      st_rating.then(function() {
-      });
-    },
+      st_rating.save();
+    }
     }
 })
-/*
-App.StarRatingComponent = Ember.Component.extend({
-    maxStars: 5,
-    starRating: 0,
-    stars: [],
-    actions: {
-        click: function(star){
-            localStorage.setItem(this.get('param.id'), star.index);
-            this.set('starRating', star.index);
-            this.sendAction('action',  this.get('param.id') ,star.index);
-        }
-    },
-    setRating: function() {
-        var stars = [], i = 0;
-        var starRating =  localStorage.getItem(this.get('param.id')) ? localStorage.getItem(this.get('param.id')) : 3;
-        for(i = 0; i < this.get('maxStars'); i++){
-            stars.pushObject(Em.Object.create({empty:i >= starRating, index:i+1}));
-        }
-        this.set('stars', stars);
-    }.observes('starRating').on('didInsertElement')
-});
-*/
