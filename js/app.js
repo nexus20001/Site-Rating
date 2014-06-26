@@ -78,28 +78,23 @@ App.SiteRoute = Ember.Route.extend({
   model: function(params) {
     return this.store.find('site', params.site_id);
   },
-    actions: {
-    saveRating: function (param,rating) {
-      var st_rating = this.get('store').find('site', param.id);
-      alert(st_rating.get('rating'));
-      //st_rating.set('rating', rating);
-      //st_rating.save();
-    },
-    }
+  setupController: function(controller, model) {
+    controller.set('model', model);
+  }
   });
-/*
+
 App.SiteController = Ember.ObjectController.extend({
-    content: {},
   actions: {
     saveRating: function (param,rating) {
       var st_rating = this.get('store').find('site', param.id);
-      alert(st_rating.get('rating'));
-      //st_rating.set('rating', rating);
-      //st_rating.save();
+      st_rating.then(function() {
+      st_rating.set('rating', rating );
+      });
+      st_rating.then(function() {
+      });
     },
     }
 })
-*/
 /*
 App.StarRatingComponent = Ember.Component.extend({
     maxStars: 5,
