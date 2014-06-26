@@ -66,6 +66,45 @@ App.SiteController = Ember.ObjectController.extend({
       var st_rating = this.get('model');
       st_rating.set('rating', rating );
       st_rating.save();
-    }
+    },
     }
 })
+
+App.SiteRoute = Ember.Route.extend({
+  model: function(params) {
+    return this.store.find('site', params.site_id);
+  },
+  setupController: function(controller, model) {
+    controller.set('model', model);
+  }
+  });
+  
+  App.SiteView = Ember.View.extend({
+
+  rating: Ember.computed.alias('context.rating'),
+  fullStars: 3,
+  numStars:  5,
+
+
+  starRange: function(start, end, type) {
+    var starsData = [];
+    for (i = start; i <= end; i++) {
+      starsData.push({ rating: i, full: type === 'full' });
+    };
+    return starsData;
+  },
+  actions: {
+    setRating: function() {
+      var newRating = $(event.target).data('rating');
+      this.set('rating', newRating);
+    }
+  },
+    stars: function() {
+    var ratings = [];
+    var fullStars = this.starRange(1, this.get('fullStars'), 'full');
+    var emptyStars = this.starRange(this.get('fullStars') + 1, this.get('numStars'), 'empty');
+    Array.prototype.push.apply(ratings, fullStars);
+    Array.prototype.push.apply(ratings, emptyStars);
+    return ratings;
+  }.property('fullStars', 'numStars')
+});
