@@ -82,7 +82,9 @@ App.SiteRoute = Ember.Route.extend({
   App.SiteView = Ember.View.extend({
 
   rating: Ember.computed.alias('context.rating'),
-  fullStars: 3,
+  fullStars: function() {
+    return this.get('rating');
+  }.property('rating'),
   numStars:  5,
 
 
